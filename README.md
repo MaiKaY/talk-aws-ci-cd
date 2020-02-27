@@ -47,3 +47,28 @@ This repository holds all examples for my talk "One CI/CD to rule them all: Comp
     - Deploy Staging
     - Approval
     - Slack notification
+
+## How to run examples?
+In the following commands exchange the following values
+- `--profile xxx` with your configured AWS profile (e.g. `--profile default`)
+- `ArtifactStoreBucket=xxx` with a S3 bucket to drop artifacts (e.g. `ArtifactStoreBucket=myawesomebucket`)
+
+### Example 1
+- `npm run deploy:pipeline:1 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+
+### Example 2
+- `npm run deploy:pipeline:2 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+
+### Example 3
+- `npm run deploy:pipeline:3 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+
+### Example 4
+- `npm run deploy:pipeline:4 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+
+### Example 5
+#### Prepare it
+- `npm run prepare:common -- --profile xxx --s3-bucket xxx`
+- `npm run deploy:common -- --profile xxx`
+
+#### Run it
+- `npm run deploy:pipeline:5 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
