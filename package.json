@@ -1,0 +1,48 @@
+{
+    "name": "@maikay/talk-aws-ci-cd",
+    "authors": [
+        {
+            "name": "Maik Schmidt",
+            "email": "maik.schmidt.hl@gmail.com"
+        }
+    ],
+    "scripts": {
+        "prepare:common": "rm -rf node_modules && rm -rf examples/common/node_modules && npm install --production && cp -R node_modules examples/common/node_modules && aws cloudformation package --template-file ./examples/common/common.yml --output-template-file ./examples/common/common-packaged.yml",
+        "deploy:common": "aws cloudformation deploy --stack-name 'Common' --template-file ./examples/common/common-packaged.yml --capabilities CAPABILITY_IAM",
+        "deploy:pipeline:1": "aws cloudformation deploy --stack-name 'Company-Driven-CICD-Part-1' --template-file ./examples/1/pipeline.yml --capabilities CAPABILITY_IAM",
+        "deploy:pipeline:2": "aws cloudformation deploy --stack-name 'Company-Driven-CICD-Part-2' --template-file ./examples/2/pipeline.yml --capabilities CAPABILITY_IAM",
+        "deploy:pipeline:3": "aws cloudformation deploy --stack-name 'Company-Driven-CICD-Part-3' --template-file ./examples/3/pipeline.yml --capabilities CAPABILITY_IAM",
+        "deploy:pipeline:4": "aws cloudformation deploy --stack-name 'Company-Driven-CICD-Part-4' --template-file ./examples/4/pipeline.yml --capabilities CAPABILITY_IAM",
+        "deploy:pipeline:5": "aws cloudformation deploy --stack-name 'Company-Driven-CICD-Part-5' --template-file ./examples/5/pipeline.yml --capabilities CAPABILITY_IAM"
+    },
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "commit-msg": "npx commitlint -e $HUSKY_GIT_PARAMS"
+        }
+    },
+    "devDependencies": {
+        "@commitlint/cli": "8.3.5",
+        "@commitlint/config-conventional": "8.3.4",
+        "@semantic-release/changelog": "5.0.0",
+        "@semantic-release/commit-analyzer": "8.0.0",
+        "@semantic-release/exec": "5.0.0",
+        "@semantic-release/git": "9.0.0",
+        "@semantic-release/release-notes-generator": "9.0.0",
+        "axios": "0.19.2",
+        "husky": "4.2.1",
+        "jest": "25.1.0",
+        "semantic-release": "17.0.0"
+    },
+    "dependencies": {
+        "aws-sdk": "2.610.0",
+        "uuid": "3.4.0"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    }
+}

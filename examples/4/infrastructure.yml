@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues:
+      - Acceptance
+      - Staging
+      - Production
+
+Conditions:
+  IsAcceptance: !Equals [!Ref Environment, Acceptance]
+  IsStaging: !Equals [!Ref Environment, Staging]
+  IsProduction: !Equals [!Ref Environment, Production]
+  EnableAggregator: !Or [Condition: IsStaging, Condition: IsProduction]
+
+Resources:
+  VisitorTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+
+  Api:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/api.handler
+      CodeUri: .
+      Runtime: nodejs12.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VisitorTable
+      Environment:
+        Variables:
+          VISITOR_TABLE: !Ref VisitorTable
+      Events:
+        Greetings:
+          Type: HttpApi
+          Properties:
+            Path: /greetings
+            Method: GET
+      DeploymentPreference:
+        Enabled: false
+
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Api}
+
+  AggregationTable:
+    Type: AWS::DynamoDB::Table
+    Condition: EnableAggregator
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  Aggregator:
+    Type: AWS::Serverless::Function
+    Condition: EnableAggregator
+    Properties:
+      Handler: src/aggregator.handler
+      CodeUri: .
+      Runtime: nodejs12.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AggregationTable
+      Environment:
+        Variables:
+          AGGREGATION_TABLE: !Ref AggregationTable
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt VisitorTable.StreamArn
+            StartingPosition: LATEST
+      DeploymentPreference:
+        Enabled: false
+
+  AggregatorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: EnableAggregator
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Aggregator}
+
+Outputs:
+  ApiEndpoint:
+    Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}

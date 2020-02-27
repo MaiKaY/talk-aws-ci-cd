@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  SkipCiChecker:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: codepipeline-skip-ci-checker.handler
+      CodeUri: .
+      Runtime: nodejs12.x
+      MemorySize: 128
+      Timeout: 10
+      Events:
+        Event:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - aws.codepipeline
+              detail:
+                state:
+                  - STARTED
+      Policies:
+        - Statement:
+            - Sid: SkipCiCheckerPolicy
+              Effect: Allow
+              Action:
+                - codepipeline:GetPipelineExecution
+                - codepipeline:StopPipelineExecution
+              Resource: '*'
+      DeploymentPreference:
+        Enabled: false
+
+  SkipCiCheckerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${SkipCiChecker}
