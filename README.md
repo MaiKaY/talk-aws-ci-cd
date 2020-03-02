@@ -49,6 +49,10 @@ This repository holds all examples for my talk "One CI/CD to rule them all: Comp
     - Slack notification
 
 ## How to run examples?
+All examples are configured to receive a GitHub oAuth token from [AWS Parameter Store](https://eu-central-1.console.aws.amazon.com/systems-manager/parameters?region=eu-west-1).
+1. generate GitHub token following [this instructions](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+2. create `/GITHUB/ACCESS_TOKEN` parameter [here](https://eu-central-1.console.aws.amazon.com/systems-manager/parameters/create?region=eu-west-1) 
+
 In the following commands exchange the following values
 - `--profile xxx` with your configured AWS profile (e.g. `--profile default`)
 - `ArtifactStoreBucket=xxx` with a S3 bucket to drop artifacts (e.g. `ArtifactStoreBucket=myawesomebucket`)
