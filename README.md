@@ -51,23 +51,25 @@ This repository holds all examples for my talk "One CI/CD to rule them all: Comp
 ## How to run examples?
 All examples are configured to receive a GitHub oAuth token from [AWS Parameter Store](https://eu-central-1.console.aws.amazon.com/systems-manager/parameters?region=eu-west-1).
 1. generate GitHub token following [this instructions](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
-2. create `/GITHUB/ACCESS_TOKEN` parameter [here](https://eu-central-1.console.aws.amazon.com/systems-manager/parameters/create?region=eu-west-1) 
+2. create `/GITHUB/ACCESS_TOKEN` parameter [here](https://eu-central-1.console.aws.amazon.com/systems-manager/parameters/create?region=eu-west-1)
+3. [fork](https://github.com/MaiKaY/talk-aws-ci-cd/fork) this repository 
 
 In the following commands exchange the following values
 - `--profile xxx` with your configured AWS profile (e.g. `--profile default`)
+- `RepositoryOwner=xxx` with your GitHub account/organization name (e.g. `RepositoryOwner=johndoe`)
 - `ArtifactStoreBucket=xxx` with a S3 bucket to drop artifacts (e.g. `ArtifactStoreBucket=myawesomebucket`)
 
 ### Example 1
-- `npm run deploy:pipeline:1 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+- `npm run deploy:pipeline:1 -- --profile xxx --parameter-overrides RepositoryOwner=xxx ArtifactStoreBucket=xxx`
 
 ### Example 2
-- `npm run deploy:pipeline:2 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+- `npm run deploy:pipeline:2 -- --profile xxx --parameter-overrides RepositoryOwner=xxx ArtifactStoreBucket=xxx`
 
 ### Example 3
-- `npm run deploy:pipeline:3 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+- `npm run deploy:pipeline:3 -- --profile xxx --parameter-overrides RepositoryOwner=xxx ArtifactStoreBucket=xxx`
 
 ### Example 4
-- `npm run deploy:pipeline:4 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+- `npm run deploy:pipeline:4 -- --profile xxx --parameter-overrides RepositoryOwner=xxx ArtifactStoreBucket=xxx`
 
 ### Example 5
 #### Prepare it
@@ -75,4 +77,4 @@ In the following commands exchange the following values
 - `npm run deploy:common -- --profile xxx`
 
 #### Run it
-- `npm run deploy:pipeline:5 -- --profile xxx --parameter-overrides ArtifactStoreBucket=xxx`
+- `npm run deploy:pipeline:5 -- --profile xxx --parameter-overrides RepositoryOwner=xxx ArtifactStoreBucket=xxx`
